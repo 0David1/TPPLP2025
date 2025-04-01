@@ -29,7 +29,7 @@ texto [] = Vacio
 texto t = Texto t Vacio
 
 -- foldDoc :: ... PENDIENTE: Ejercicio 1 ...
-
+foldDoc ::
 foldDoc = error "PENDIENTE: Ejercicio 1"
 
 -- NOTA: Se declara `infixr 6 <+>` para que `d1 <+> d2 <+> d3` sea equivalente a `d1 <+> (d2 <+> d3)`
