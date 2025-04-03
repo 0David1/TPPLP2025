@@ -11,6 +11,10 @@ module Documento
   )
 where
 
+
+
+
+
 data Doc
   = Vacio
   | Texto String Doc
@@ -30,26 +34,54 @@ texto t = Texto t Vacio
 
 -- foldDoc :: ... PENDIENTE: Ejercicio 1 ...
 
-foldDoc = error "PENDIENTE: Ejercicio 1"
+
+--es mas correcto tener una funcion por cada caso recursivo
+foldDoc :: (Doc -> t -> t) -> (Doc -> t -> t) -> t -> Doc -> t
+foldDoc fTexto fLinea base Vacio = base
+foldDoc fTexto fLinea base (Texto s d) = fTexto(Texto s d) (foldDoc fTexto fLinea base d)
+foldDoc fTexto fLinea base (Linea i d) = fLinea(Linea i d) (foldDoc fTexto fLinea base d)
+
+
+
 
 -- NOTA: Se declara `infixr 6 <+>` para que `d1 <+> d2 <+> d3` sea equivalente a `d1 <+> (d2 <+> d3)`
 -- También permite que expresiones como `texto "a" <+> linea <+> texto "c"` sean válidas sin la necesidad de usar paréntesis.
 infixr 6 <+>
 
+
+combinar :: Doc -> Doc -> Doc
+combinar (Texto s d) (Texto s2 d3) = Texto (s ++ s2) d3
+combinar (Texto s _) j = Texto s j
+
+
+
+--justificar porque satisface el invariante.
+
+
+{-
+El variante de texto se mantiene ya que la funcion combinar en caso de combinar dos textos lo combina en 1, y recursivamente siempre que tengamos textos
+seguidos se concatenaran en un solo Doc Texto (todos los texto seguidos concantenados) rec
+entonces seguiremos concatenando hasta una linea o vacio.siempre partiendo de que combinamos dos docs validos
+En el caso de linea no en ninguno de los casos se modifica el valor int asociado por lo que en caso de que partimos de docs que cumplen el invariante <+> 
+no lo va a romper.
+
+-}
 (<+>) :: Doc -> Doc -> Doc
-d1 <+> d2 = error "PENDIENTE: Ejercicio 2"
+d1 <+> d2 = foldDoc combinar (\(Linea i _) acc -> Linea i acc) d2 d1
 
+
+
+--indentar cumple con el invariante ya que solo afecta el constructor  linea, y como la funcion requiere que i sea mayor a cero , si parto de una estructura
+--Doc valida entonces sumarle el parametro > 0 a una linea cuyo primer parametro es mayor a cero, nos devolvera un i >= 0.
 indentar :: Int -> Doc -> Doc
-indentar i = error "PENDIENTE: Ejercicio 3"
+indentar i | i > 0 =foldDoc (\(Texto s _) -> Texto s ) (\(Linea j _ ) -> Linea (j+i) ) Vacio 
 
-mostrar :: Doc -> String
-mostrar = error "PENDIENTE: Ejercicio 4"
+
+
+mostrar :: Doc -> String 
+mostrar = foldDoc (\(Texto s _) -> (s++)) (\(Linea n _) ->(++) ("\n" ++ [' '| _ <- [1..n]])) ""
 
 -- | Función dada que imprime un documento en pantalla
-
--- ghci> imprimir (Texto "abc" (Linea 2 (Texto "def" Vacio)))
--- abc
---   def
 
 imprimir :: Doc -> IO ()
 imprimir d = putStrLn (mostrar d)
