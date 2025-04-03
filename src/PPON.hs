@@ -1,6 +1,7 @@
 module PPON where
 
 import Documento
+import Control.Arrow (Arrow(second))
 
 data PPON
   = TextoPP String
@@ -16,11 +17,10 @@ pponAtomico _ = False
 
 
 
-pponSegundo :: (String , PPON) -> PPON
-pponSegundo (_, y) = y
+
 
 pponObjetoSimple :: PPON -> Bool
-pponObjetoSimple (ObjetoPP lista) = foldr (\elemento rec-> pponAtomico(pponSegundo elemento) && rec) True lista
+pponObjetoSimple (ObjetoPP lista) = foldr (\elemento rec-> pponAtomico(snd elemento) && rec) True lista
 
 
 
@@ -43,6 +43,8 @@ entreLlaves ds =
     <+> texto "}"
 
 
+
+--preguntar si rompe la consigna.
 hastaN :: String -> String
 hastaN = foldr(\actual recursivo->if actual == '\n' then [] else actual:recursivo )""
 
@@ -58,5 +60,6 @@ aplanar = texto. foldDoc (\j acc -> hastaN(mostrar j)++ acc ) (\_ acc -> ' ': ac
 pponADoc :: PPON -> Doc
 pponADoc (TextoPP s) = texto ("\""++s++"\"")
 pponADoc (IntPP i) = texto (show i)
-pponADoc (ObjetoPP lista)|pponObjetoSimple (ObjetoPP lista) = aplanar (entreLlaves(foldr (\(primero , segundo) acc ->[intercalar(texto ": ") [texto ("\""++primero++"\""),pponADoc segundo ] ]++acc) [] lista))
-  |otherwise = entreLlaves(foldr (\(primero , segundo) acc ->[intercalar(texto ": ") [texto ("\""++primero++"\""),pponADoc segundo ] ]++acc) [] lista)
+pponADoc (ObjetoPP lista)|pponObjetoSimple (ObjetoPP lista) = aplanar (entreLlaves (agregarDosPuntos lista))
+  |otherwise = entreLlaves (agregarDosPuntos lista)
+    where agregarDosPuntos =foldr (\(primero , segundo) acc ->intercalar(texto ": ") [texto ("\""++primero++"\""),pponADoc segundo ] : acc) []

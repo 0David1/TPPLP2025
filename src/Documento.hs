@@ -37,9 +37,11 @@ texto t = Texto t Vacio
 
 --es mas correcto tener una funcion por cada caso recursivo
 foldDoc :: (Doc -> t -> t) -> (Doc -> t -> t) -> t -> Doc -> t
-foldDoc fTexto fLinea base Vacio = base
-foldDoc fTexto fLinea base (Texto s d) = fTexto(Texto s d) (foldDoc fTexto fLinea base d)
-foldDoc fTexto fLinea base (Linea i d) = fLinea(Linea i d) (foldDoc fTexto fLinea base d)
+foldDoc fTexto fLinea base d =  case d of 
+                                    Vacio -> base
+                                    Texto s d -> fTexto( Texto s d) (recursivo d)
+                                    Linea i d -> fLinea( Linea i d) (recursivo d)
+                                where recursivo = foldDoc fTexto fLinea base
 
 
 
@@ -49,6 +51,9 @@ foldDoc fTexto fLinea base (Linea i d) = fLinea(Linea i d) (foldDoc fTexto fLine
 infixr 6 <+>
 
 
+
+
+--preguntar si esta funcion rompe la consigna de que tiene que ser estructural solo foldDoc.
 combinar :: Doc -> Doc -> Doc
 combinar (Texto s d) (Texto s2 d3) = Texto (s ++ s2) d3
 combinar (Texto s _) j = Texto s j
