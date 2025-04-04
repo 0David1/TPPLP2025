@@ -28,9 +28,16 @@ texto t | '\n' `elem` t = error "El texto no debe contener saltos de línea"
 texto [] = Vacio
 texto t = Texto t Vacio
 
--- foldDoc :: ... PENDIENTE: Ejercicio 1 ...
 
-foldDoc = error "PENDIENTE: Ejercicio 1"
+-- Ejercicio 1
+foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
+foldDoc cVacio cTexto cLinea doc = case doc of
+    Vacio     -> cVacio
+    Texto s d -> cTexto s (rec d)
+    Linea n d -> cLinea n (rec d)
+  where rec = foldDoc cVacio cTexto cLinea
+
+-- Ejercicio 2
 
 -- NOTA: Se declara `infixr 6 <+>` para que `d1 <+> d2 <+> d3` sea equivalente a `d1 <+> (d2 <+> d3)`
 -- También permite que expresiones como `texto "a" <+> linea <+> texto "c"` sean válidas sin la necesidad de usar paréntesis.
