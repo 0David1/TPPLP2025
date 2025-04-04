@@ -43,11 +43,6 @@ entreLlaves ds =
     <+> texto "}"
 
 
-
---preguntar si rompe la consigna.
-hastaN :: String -> String
-hastaN = foldr(\actual recursivo->if actual == '\n' then [] else actual:recursivo )""
-
 aplanar :: Doc -> Doc
 aplanar = texto. foldDoc (++) (\_ acc -> ' ': acc) ""
 
