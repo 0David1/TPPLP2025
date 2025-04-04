@@ -48,13 +48,8 @@ entreLlaves ds =
 hastaN :: String -> String
 hastaN = foldr(\actual recursivo->if actual == '\n' then [] else actual:recursivo )""
 
-
-
-{- foldDoc texto linea base Doc
--}
 aplanar :: Doc -> Doc
-aplanar = texto. foldDoc (\j acc -> hastaN(mostrar j)++ acc ) (\_ acc -> ' ': acc) ""
---aplanar =texto.foldDoc (\primero acc -> if head(mostrar primero) == '\n' then ' ':acc else hastaN(mostrar primero)++ acc) "" 
+aplanar = texto. foldDoc (++) (\_ acc -> ' ': acc) ""
 
 
 pponADoc :: PPON -> Doc

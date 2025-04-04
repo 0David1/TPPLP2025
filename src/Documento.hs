@@ -12,9 +12,6 @@ module Documento
 where
 
 
-
-
-
 data Doc
   = Vacio
   | Texto String Doc
@@ -36,11 +33,11 @@ texto t = Texto t Vacio
 
 
 --es mas correcto tener una funcion por cada caso recursivo
-foldDoc :: (Doc -> t -> t) -> (Doc -> t -> t) -> t -> Doc -> t
+foldDoc :: (String -> t -> t) -> (Int -> t -> t) -> t -> Doc -> t
 foldDoc fTexto fLinea base d =  case d of 
                                     Vacio -> base
-                                    Texto s d -> fTexto( Texto s d) (recursivo d)
-                                    Linea i d -> fLinea( Linea i d) (recursivo d)
+                                    Texto s d -> fTexto s (recursivo d)
+                                    Linea i d -> fLinea i (recursivo d)
                                 where recursivo = foldDoc fTexto fLinea base
 
 
@@ -54,16 +51,17 @@ infixr 6 <+>
 
 
 --preguntar si esta funcion rompe la consigna de que tiene que ser estructural solo foldDoc.
-combinar :: Doc -> Doc -> Doc
-combinar (Texto s d) (Texto s2 d3) = Texto (s ++ s2) d3
-combinar (Texto s _) j = Texto s j
+combinar :: String -> Doc -> Doc
+combinar s (Texto s2 d3) = Texto (s ++ s2) d3
+combinar s j = Texto s j
 
 
 
---justificar porque satisface el invariante.
+
 
 
 {-
+####-justificar porque satisface el invariante-###
 El variante de texto se mantiene ya que la funcion combinar en caso de combinar dos textos lo combina en 1, y recursivamente siempre que tengamos textos
 seguidos se concatenaran en un solo Doc Texto (todos los texto seguidos concantenados) rec
 entonces seguiremos concatenando hasta una linea o vacio.siempre partiendo de que combinamos dos docs validos
@@ -72,19 +70,19 @@ no lo va a romper.
 
 -}
 (<+>) :: Doc -> Doc -> Doc
-d1 <+> d2 = foldDoc combinar (\(Linea i _) acc -> Linea i acc) d2 d1
+d1 <+> d2 = foldDoc combinar (\i acc -> Linea i acc) d2 d1
 
 
 
 --indentar cumple con el invariante ya que solo afecta el constructor  linea, y como la funcion requiere que i sea mayor a cero , si parto de una estructura
 --Doc valida entonces sumarle el parametro > 0 a una linea cuyo primer parametro es mayor a cero, nos devolvera un i >= 0.
 indentar :: Int -> Doc -> Doc
-indentar i | i > 0 =foldDoc (\(Texto s _) -> Texto s ) (\(Linea j _ ) -> Linea (j+i) ) Vacio 
+indentar i | i >= 0 =foldDoc Texto (Linea .(+i)) Vacio 
 
 
 
 mostrar :: Doc -> String 
-mostrar = foldDoc (\(Texto s _) -> (s++)) (\(Linea n _) ->(++) ("\n" ++ [' '| _ <- [1..n]])) ""
+mostrar = foldDoc (++) (\n->(++) ("\n" ++ [' '| _ <- [1..n]])) ""
 
 -- | Función dada que imprime un documento en pantalla
 
