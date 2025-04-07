@@ -55,21 +55,36 @@ d1 <+> d2 = foldDoc d2 combinar Linea d1
 -- Sea Texto s d entonces:
 
 -- s no debe ser el string vacio, se satisface pues sea `texto s` si s es el string vacio entonces la funcion texto retorna Vacio
--- por lo que es imposible obtener un Doc de tipo `Texto s d`con s siendo ""
+-- por lo que es imposible obtener un Doc `Texto s d`con s siendo ""
 
 -- s no debe contener saltos de linea, se satisface pues la funcion texto usa elem para buscar saltos de linea en el string s, en caso de haberlos retorna error
 
--- d debe ser Vacio o Linea i d',
+-- d debe ser Vacio o Linea i d', en el caso de que se realize d1 <+> d2, si d1 es Texto s1 Vacio:
+-- en caso de que d2 sea otro Texto s2 combina sus string en un solo Texto (s1++s2) Vacio
+-- en caso de que d2 sea Vacio entonces se devuelve d1
+-- en caso de que d2 sea Linea se concatena a d1 retornando Texto s1 d2
 
--- sea Linea i d entonces: i >= 0,
+-- sea Linea i d entonces:
 
-agregarIdentacion :: Int -> Int -> Doc -> Doc
-agregarIdentacion agregar n = Linea (n+agregar)
+-- i >= 0, se cumple puesto que la funcion linea retorna Linea 0 Vacio y en la funcion no modificamos el valor int asociado
+
+agregarIndentacion :: Int -> Int -> Doc -> Doc
+agregarIndentacion agregar n | agregar <= 0 = error "la cantidad de espacios a agregar debe ser mayor a 0"
+                             | otherwise = Linea (n+agregar)
 
 indentar :: Int -> Doc -> Doc
-indentar i = foldDoc Vacio Texto (agregarIdentacion i) 
+indentar i = foldDoc Vacio Texto (agregarIndentacion i)
 
--- 
+-- Sea Texto s d entonces:
+
+-- s no debe ser el string vacio y s no debe contener saltos de linea, igual que en el ejercicio anterior, la funcion texto mantiene estos dos invariantes
+
+-- d debe ser Vacio o Linea i d', en este caso d solo puede ser Vacio siempre que usemos la funcion texto, la unica forma de que d sea Texto o Linea es concatenando con otro Doc
+-- y esto solo ocurre usando la funcion <+>, y en el ejercicio anterior vimos que dicha funcion mantiene este invariante por lo tanto se cumple
+
+-- sea Linea i d entonces:
+-- i >= 0, se cumple pues la funcion linea genera una Linea 0 Vacio y su valor solo se modifica mediante la funcion auxiliar agregarIndentacion que en caso de que la cantidad de espacios a agregar sea menor o igual a 0 retornara error
+-- por lo que el valor i como minimo va a ser 0 cumpliendo asi el invariante
 
 generarEspacio :: Int -> String -> String
 generarEspacio n s = "\n" ++ replicate n ' ' ++ s
