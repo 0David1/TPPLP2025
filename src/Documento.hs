@@ -44,13 +44,24 @@ foldDoc cVacio cTexto cLinea doc = case doc of
 infixr 6 <+>
 
 (<+>) :: Doc -> Doc -> Doc
-d1 <+> d2 = error "PENDIENTE: Ejercicio 2"
+d1 <+> d2 = foldDoc d2 concatenar Linea d1
 
+concatenar :: String -> Doc -> Doc
+concatenar s1 d2 = case d2 of
+  Vacio        -> texto s1
+  Texto s2 doc -> Texto (s1++s2) doc
+  Linea n doc  -> Texto s1 (Linea n doc)
+
+-- Ejercicio 3
 indentar :: Int -> Doc -> Doc
-indentar i = error "PENDIENTE: Ejercicio 3"
+indentar n = foldDoc Vacio Texto (\m acc -> Linea (m + n) acc)
 
+
+-- Ejercicio 4
 mostrar :: Doc -> String
-mostrar = error "PENDIENTE: Ejercicio 4"
+mostrar = foldDoc "" (++) (\i rec -> ("\n" ++ concat (replicate i " ")) ++ rec)
+
+
 
 -- | Función dada que imprime un documento en pantalla
 
