@@ -24,7 +24,8 @@ testsEj2 =
   test
     [ vacio <+> vacio ~?= vacio,
       texto "a" <+> texto "b" ~?= texto "ab",
-      (texto "a" <+> linea) <+> texto "b" ~?= texto "a" <+> (linea <+> texto "b")
+      (texto "a" <+> linea) <+> texto "b" ~?= texto "a" <+> (linea <+> texto "b"),
+      texto "a" <+> linea <+> texto "b" <+> texto "c" <+> linea <+> texto "d" ~?= texto "a" <+> linea <+> texto "bc" <+> linea <+> texto "d"
     ]
 
 testsEj3 :: Test
@@ -33,7 +34,8 @@ testsEj3 =
     [ indentar 2 vacio ~?= vacio,
       indentar 2 (texto "a") ~?= texto "a",
       indentar 2 (texto "a" <+> linea <+> texto "b") ~?= texto "a" <+> indentar 2 (linea <+> texto "b"),
-      indentar 2 (linea <+> texto "a") ~?= indentar 1 (indentar 1 (linea <+> texto "a"))
+      indentar 2 (linea <+> texto "a") ~?= indentar 1 (indentar 1 (linea <+> texto "a")),
+      indentar 4 (texto "a" <+> linea <+> texto "b" <+> texto "c" <+> linea <+> texto "d") ~?= indentar 1 (texto "a" <+> indentar 3 (linea <+> texto "bc" <+> linea <+> texto "d"))
     ]
 
 testsEj4 :: Test
@@ -41,7 +43,8 @@ testsEj4 =
   test
     [ mostrar vacio ~?= "",
       mostrar linea ~?= "\n",
-      mostrar (indentar 2 (texto "a" <+> linea <+> texto "b")) ~?= "a\n  b"
+      mostrar (indentar 2 (texto "a" <+> linea <+> texto "b")) ~?= "a\n  b",
+      mostrar (indentar 4 (texto "a" <+> linea <+> texto "b" <+> texto "c" <+> linea <+> texto "d")) ~?= "a\n    bc\n    d"
     ]
 
 pericles, merlina, addams, familias :: PPON
@@ -54,7 +57,9 @@ testsEj6 :: Test
 testsEj6 =
   test
     [ pponObjetoSimple pericles ~?= True,
-      pponObjetoSimple addams ~?= False
+      pponObjetoSimple addams ~?= False,
+      pponObjetoSimple familias ~?= False,
+      pponObjetoSimple merlina ~?= True
     ]
 
 a, b, c :: Doc
@@ -68,13 +73,17 @@ testsEj7 =
     [ mostrar (intercalar (texto ", ") []) ~?= "",
       mostrar (intercalar (texto ", ") [a, b, c]) ~?= "a, b, c",
       mostrar (entreLlaves []) ~?= "{ }",
-      mostrar (entreLlaves [a, b, c]) ~?= "{\n  a,\n  b,\n  c\n}"
+      mostrar (entreLlaves [a, b, c]) ~?= "{\n  a,\n  b,\n  c\n}",
+      mostrar (intercalar (texto ", ") [a <+> texto ": 1", b <+> texto ": 2", c <+> texto ": 3"]) ~?= "a: 1, b: 2, c: 3",
+      mostrar (entreLlaves [a <+> texto ": 1", b <+> texto ": 2", c <+> texto ": 3"]) ~?= "{\n  a: 1,\n  b: 2,\n  c: 3\n}"
     ]
 
 testsEj8 :: Test
 testsEj8 =
   test
-    [ mostrar (aplanar (a <+> linea <+> b <+> linea <+> c)) ~?= "a b c"
+    [ mostrar (aplanar (a <+> linea <+> b <+> linea <+> c)) ~?= "a b c",
+      mostrar (aplanar (texto "a" <+> linea <+> texto "b" <+> texto "c" <+> linea <+> texto "d")) ~?= "a bc d",
+      mostrar (aplanar (texto "a" <+> linea <+> indentar 4 (texto "b" <+> texto "c" <+> linea <+> texto "d"))) ~?= "a bc d"
     ]
 
 testsEj9 :: Test
@@ -82,5 +91,6 @@ testsEj9 =
   test
     [ mostrar (pponADoc pericles) ~?= "{ \"nombre\": \"Pericles\", \"edad\": 30 }",
       mostrar (pponADoc addams) ~?= "{\n  \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n  \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n}",
-      mostrar (pponADoc familias) ~?= "{\n  \"Addams\": {\n    \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n    \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n  }\n}"
+      mostrar (pponADoc familias) ~?= "{\n  \"Addams\": {\n    \"0\": { \"nombre\": \"Pericles\", \"edad\": 30 },\n    \"1\": { \"nombre\": \"Merlina\", \"edad\": 24 }\n  }\n}",
+      mostrar (pponADoc merlina) ~?= "{ \"nombre\": \"Merlina\", \"edad\": 24 }"
     ]
