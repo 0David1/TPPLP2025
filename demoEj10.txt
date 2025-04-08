@@ -1,0 +1,7 @@
+Programación Dinamica
+	paradigma de programación, que puede sistemáticamente y eficientemente explorar todas las posibles soluciones a un problema. Puede resolver problemas que tienen las siguientes características:
+	1) El problema puede resolverse a través de subproblemas superponibles, versiones mas chicas del problema original que se pueden reutilizar multiples veces.
+	2) El problema tiene una busqueda de optimalidad, es decir , una solución óptica se puede formar de soluciones optimas de los subproblemas del problema original.
+
+Secuencia de fibonacci es el primer ejemplo clásico para explicar programación dinámica. 
+
