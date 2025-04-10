@@ -13,10 +13,11 @@ allTests =
     [ "Ejercicio 1" ~: testsEj1,
       "Ejercicio 2" ~: testsEj2,
       "Ejercicio 3" ~: testsEj3,
-      "Ejercicio 4" ~: testsEj4
-    --  "Ejercicio 6" ~: testsEj6,
-    --  "Ejercicio 7" ~: testsEj7,
-    --  "Ejercicio 8" ~: testsEj8,
+      "Ejercicio 4" ~: testsEj4,
+      "Ejercicio 5" ~: testsEj5,
+      "Ejercicio 6" ~: testsEj6,
+      "Ejercicio 7" ~: testsEj7,
+      "Ejercicio 8" ~: testsEj8
     --  "Ejercicio 9" ~: testsEj9
     ]
 
@@ -55,6 +56,15 @@ testsEj4 =
       mostrar (indentar 2 (texto "a" <+> linea <+> texto "b")) ~?= "a\n  b"
     ]
 
+testsEj5 :: Test
+testsEj5 = 
+  test
+    [ pponAtomico (ObjetoPP [("clave", TextoPP "valor")]) ~?= False,
+      pponAtomico (TextoPP "texto") ~?= True,
+      pponAtomico (IntPP 2) ~?= True 
+    ]
+
+
 pericles, merlina, addams, familias :: PPON
 pericles = ObjetoPP [("nombre", TextoPP "Pericles"), ("edad", IntPP 30)]
 merlina = ObjetoPP [("nombre", TextoPP "Merlina"), ("edad", IntPP 24)]
@@ -77,6 +87,8 @@ testsEj7 :: Test
 testsEj7 =
   test
     [ mostrar (intercalar (texto ", ") []) ~?= "",
+      mostrar (intercalar (texto ", ") [a]) ~?= "a",
+      mostrar (intercalar (texto ", ") [a, b]) ~?= "a, b",
       mostrar (intercalar (texto ", ") [a, b, c]) ~?= "a, b, c",
       mostrar (entreLlaves []) ~?= "{ }",
       mostrar (entreLlaves [a, b, c]) ~?= "{\n  a,\n  b,\n  c\n}"

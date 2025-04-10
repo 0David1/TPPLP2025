@@ -8,14 +8,23 @@ data PPON
   | ObjetoPP [(String, PPON)]
   deriving (Eq, Show)
 
+-- Ejercicio 5
 pponAtomico :: PPON -> Bool
-pponAtomico = error "PENDIENTE: Ejercicio 5"
+pponAtomico p = case p of
+  TextoPP _ -> True
+  IntPP _   -> True
+  _         -> False   
 
+
+-- Ejercicio 6
 pponObjetoSimple :: PPON -> Bool
-pponObjetoSimple = error "PENDIENTE: Ejercicio 6"
+pponObjetoSimple (ObjetoPP l) = foldr (\e rec -> pponAtomico (snd e) && rec) True l
 
+-- Ejercicio 7
 intercalar :: Doc -> [Doc] -> Doc
-intercalar = error "PENDIENTE: Ejercicio 7"
+intercalar _ []           = vacio
+intercalar separador docs = foldr1 (\doc rec -> doc <+> separador <+> rec) docs
+
 
 entreLlaves :: [Doc] -> Doc
 entreLlaves [] = texto "{ }"
@@ -29,8 +38,11 @@ entreLlaves ds =
     <+> linea
     <+> texto "}"
 
-aplanar :: Doc -> Doc
-aplanar = error "PENDIENTE: Ejercicio 8"
 
+-- Ejercicio 8
+aplanar :: Doc -> Doc
+aplanar = texto . foldDoc "" (++) (\_ rec -> ' ':rec)
+
+-- Ejercicio 9
 pponADoc :: PPON -> Doc
 pponADoc = error "PENDIENTE: Ejercicio 9"
