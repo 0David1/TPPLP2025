@@ -45,4 +45,11 @@ aplanar = texto . foldDoc "" (++) (\_ rec -> ' ':rec)
 
 -- Ejercicio 9
 pponADoc :: PPON -> Doc
-pponADoc = error "PENDIENTE: Ejercicio 9"
+pponADoc pp = case pp of
+    TextoPP s  -> texto (show s)
+    IntPP i    -> texto (show i)
+    ObjetoPP l
+        | pponObjetoSimple (ObjetoPP l) -> aplanar (entreLlaves (agregarDosPuntos l))
+        | otherwise                     -> entreLlaves (agregarDosPuntos l)
+  where agregarDosPuntos = foldr (\(x , y) rec -> intercalar (texto ": ") [texto (show  x), pponADoc y ] : rec) []
+

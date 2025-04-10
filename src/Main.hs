@@ -17,8 +17,8 @@ allTests =
       "Ejercicio 5" ~: testsEj5,
       "Ejercicio 6" ~: testsEj6,
       "Ejercicio 7" ~: testsEj7,
-      "Ejercicio 8" ~: testsEj8
-    --  "Ejercicio 9" ~: testsEj9
+      "Ejercicio 8" ~: testsEj8,
+      "Ejercicio 9" ~: testsEj9
     ]
 
 
