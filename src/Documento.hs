@@ -30,27 +30,26 @@ texto t = Texto t Vacio
 
 -- foldDoc :: ... PENDIENTE: Ejercicio 1 ...
 foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
-foldDoc cVacio cTexto cLinea documento = case documento of
-    Vacio -> cVacio
-    Texto text doc ->  cTexto text (rec doc)
-    Linea n doc -> cLinea n (rec doc)
-  where
-    rec = foldDoc cVacio cTexto cLinea 
+foldDoc cVacio cTexto cLinea doc = case doc of
+    Vacio     -> cVacio
+    Texto s d -> cTexto s (rec d)
+    Linea n d -> cLinea n (rec d)
+  where rec = foldDoc cVacio cTexto cLinea
 
 -- NOTA: Se declara `infixr 6 <+>` para que `d1 <+> d2 <+> d3` sea equivalente a `d1 <+> (d2 <+> d3)`
 -- También permite que expresiones como `texto "a" <+> linea <+> texto "c"` sean válidas sin la necesidad de usar paréntesis.
 infixr 6 <+>
 
 -- funcion auxiliar para manejar el caso en que se combinen dos textos
-combinar :: String -> Doc -> Doc
-combinar s1 d2 = case d2 of
-  Vacio -> texto s1
+concatenar :: String -> Doc -> Doc
+concatenar s1 d2 = case d2 of
+  Vacio        -> texto s1
   Texto s2 doc -> Texto (s1++s2) doc
-  Linea n doc -> Texto s1 (Linea n doc)
+  Linea n doc  -> Texto s1 (Linea n doc)
 
 
 (<+>) :: Doc -> Doc -> Doc
-d1 <+> d2 = foldDoc d2 combinar Linea d1
+d1 <+> d2 = foldDoc d2 concatenar Linea d1
 
 -- Sea Texto s d entonces:
 
@@ -68,12 +67,8 @@ d1 <+> d2 = foldDoc d2 combinar Linea d1
 
 -- i >= 0, se cumple puesto que la funcion linea retorna Linea 0 Vacio y en la funcion no modificamos el valor int asociado
 
-agregarIndentacion :: Int -> Int -> Doc -> Doc
-agregarIndentacion agregar n | agregar <= 0 = error "la cantidad de espacios a agregar debe ser mayor a 0"
-                             | otherwise = Linea (n+agregar)
-
 indentar :: Int -> Doc -> Doc
-indentar i = foldDoc Vacio Texto (agregarIndentacion i)
+indentar i | i > 0 = foldDoc Vacio Texto (Linea . (+i))
 
 -- Sea Texto s d entonces:
 
@@ -86,11 +81,8 @@ indentar i = foldDoc Vacio Texto (agregarIndentacion i)
 -- i >= 0, se cumple pues la funcion linea genera una Linea 0 Vacio y su valor solo se modifica mediante la funcion auxiliar agregarIndentacion que en caso de que la cantidad de espacios a agregar sea menor o igual a 0 retornara error
 -- por lo que el valor i como minimo va a ser 0 cumpliendo asi el invariante
 
-generarEspacio :: Int -> String -> String
-generarEspacio n s = "\n" ++ replicate n ' ' ++ s
-
 mostrar :: Doc -> String
-mostrar = foldDoc [] (++) generarEspacio
+mostrar = foldDoc "" (++) (\i d -> ("\n" ++ replicate i ' ') ++ d)
 
 -- | Función dada que imprime un documento en pantalla
 
