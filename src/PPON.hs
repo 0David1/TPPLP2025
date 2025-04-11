@@ -53,3 +53,7 @@ pponADoc pp = case pp of
         | otherwise                     -> entreLlaves (agregarDosPuntos l)
   where agregarDosPuntos = foldr (\(x , y) rec -> intercalar (texto ": ") [texto (show  x), pponADoc y ] : rec) []
 
+
+-- Es recursion estructural pues los casos base devuelven un valor fijo que no depende de la funcion pponADoc
+-- y el caso recursivo no usa pponAdoc ni los 'y' en otro lado salvo en la expresion (pponADoc y)
+-- ('y' representa a los PPON en cada tupla de la lista que vendrian siendo las subestructuras sobre las cuales se hace la recursion)

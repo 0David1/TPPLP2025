@@ -1,0 +1,120 @@
+Sean las siguientes definiciones:
+data Doc = Vacio | Texto String Doc | Linea Int Doc
+
+indentar :: Int -> Doc -> Doc
+{I} indentar i = foldDoc Vacio Texto (agregarIndentacion i)
+
+agregarIndentacion :: Int -> Int -> Doc -> Doc
+agregarIndentacion agregar n | {A0} agregar <= 0 = error "la cantidad de espacios a agregar debe ser mayor a 0"
+                             | {A1} otherwise = Linea (n+agregar)
+
+foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
+foldDoc cVacio cTexto cLinea documento = case documento of
+{F0}  Vacio -> cVacio
+{F1}  Texto text doc ->  cTexto text (rec doc)
+{F2}  Linea n doc -> cLinea n (rec doc)
+  where rec = foldDoc cVacio cTexto cLinea 
+
+Lemas:
+∀k :: Int positivo
+{Lema1} indentar k Vacio = Vacio 
+
+∀k :: Int positivo, ∀s :: String, ∀d :: Doc.
+{Lema2} indentar k (Texto s d) = Texto s (indentar k d)
+
+∀m, k :: Int positivos, ∀d :: Doc
+{Lema3} indentar m (Linea k d) = Linea (m+k) (indentar m d)
+
+queremos ver que ∀n, m :: Int positivos, ∀x :: Doc.
+indentar n (indentar m x) = indentar (n+m) x
+
+Hacemos induccion estructural en x :: Doc,
+P(x) = ∀n, m :: Int positivos. indentar n (indentar m x) = indentar (n+m) x
+
+Caso Base:
+
+x = Vacio
+
+Lado izquierdo:
+
+indentar n (indentar m Vacio)
+= indentar n Vacio {Lema1}
+= Vacio {Lema1}
+
+Lado derecho:
+
+indentar (n+m) Vacio
+= Vacio {Lema1}
+
+queda probado el caso base x = Vacio
+
+Casos inductivos:
+
+x = Texto s d
+
+HI : P(d), es decir:
+∀n, m :: Int positivos. indentar n (indentar m d) = indentar (n+m) d
+
+Lado izquierdo:
+
+indentar n (indentar m (Texto s d))
+= indentar n (Texto s (indentar m d)) {Lema2}
+= Texto s (indentar n (indentar m d)) {Lema2}
+= Texto s (indentar (n+m) d) {HI}
+
+Lado derecho:
+
+indentar (n+m) (Texto s d)
+= Texto s (indentar (n+m) d) {Lema2}
+
+queda probado el caso x = Texto s d
+ahora veamos el otro caso
+
+x = Linea h d
+
+Lado izquierdo:
+
+indentar n (indentar m (Linea h d))
+= indentar n (Linea (m+h) (indentar m d)) {Lema3}
+= Linea (n+m+h) (indentar n (indentar m d)) {Lema3}
+= Linea (n+m+h) (indentar (n+m) d) {HI}
+
+Lado derecho:
+
+indentar (n+m) (Linea h d) 
+= Linea (n+m+h) (indentar (n+m) d) {Lema3}
+
+queda probado el caso x = Linea h d
+demostramos que ∀n, m :: Int positivos, ∀x :: Doc.
+indentar n (indentar m x) = indentar (n+m) x
+
+Demostracion del {Lema1}:
+
+∀k :: Int positivo
+indentar k Vacio = Vacio
+
+indentar k Vacio
+= foldDoc Vacio Texto (agregarIndentacion k) Vacio {I}
+= Vacio {F0}
+
+Demostracion del {Lema2}:
+
+∀k :: Int positivo, ∀s :: String, ∀d :: Doc
+indentar k (Texto s d) = Texto s (indentar k d)
+
+indentar k (Texto s d)
+= foldDoc Vacio Texto (agregarIndentacion k) (Texto s d) {I}
+= Texto s (foldDoc Vacio Texto (agregarIndentacion k) d) {F1}
+= Texto s (indentar k d) {I}
+
+Demostracion del {Lema3}:
+
+∀m, k :: Int positivos, ∀d :: Doc
+indentar m (Linea k d) = Linea (m+k) (indentar m d)
+
+indentar m (Linea k d)
+= foldDoc Vacio Texto (agregarIndentacion m) (Linea k d) {I}
+= agregarIndentacion k (foldDoc Vacio Texto (agregarIndentacion m) d) {F2}
+= agregarIndentacion m k (indentar m d) {I}
+= Linea (k+m) (indentar m d) {A1}
+= Linea (m+k) (indentar m d) {Conmutatividad de la suma}
