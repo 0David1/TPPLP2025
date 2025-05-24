@@ -28,7 +28,7 @@ texto t | '\n' `elem` t = error "El texto no debe contener saltos de línea"
 texto [] = Vacio
 texto t = Texto t Vacio
 
--- foldDoc :: ... PENDIENTE: Ejercicio 1 ...
+--EJ1
 foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
 foldDoc cVacio cTexto cLinea doc = case doc of
     Vacio     -> cVacio
@@ -47,7 +47,7 @@ concatenar s1 d2 = case d2 of
   Texto s2 doc -> Texto (s1++s2) doc
   Linea n doc  -> Texto s1 (Linea n doc)
 
-
+--EJ2
 (<+>) :: Doc -> Doc -> Doc
 d1 <+> d2 = foldDoc d2 concatenar Linea d1
 
@@ -67,8 +67,10 @@ d1 <+> d2 = foldDoc d2 concatenar Linea d1
 
 -- i >= 0, se cumple puesto que la funcion linea retorna Linea 0 Vacio y en la funcion no modificamos el valor int asociado
 
+
+--EJ3
 indentar :: Int -> Doc -> Doc
-indentar i | i > 0 = foldDoc Vacio Texto (Linea . (+i))
+indentar i = foldDoc Vacio Texto (Linea . (+i))
 
 -- Sea Texto s d entonces:
 
@@ -78,9 +80,11 @@ indentar i | i > 0 = foldDoc Vacio Texto (Linea . (+i))
 -- y esto solo ocurre usando la funcion <+>, y en el ejercicio anterior vimos que dicha funcion mantiene este invariante por lo tanto se cumple
 
 -- sea Linea i d entonces:
--- i >= 0, se cumple pues la funcion linea genera una Linea 0 Vacio y su valor solo se modifica mediante la funcion auxiliar agregarIndentacion que en caso de que la cantidad de espacios a agregar sea menor o igual a 0 retornara error
+-- i >= 0, se cumple pues la funcion linea genera una Linea 0 Vacio y podemos asumir que indentar recibe un entero mayor a 0
 -- por lo que el valor i como minimo va a ser 0 cumpliendo asi el invariante
 
+
+--EJ4
 mostrar :: Doc -> String
 mostrar = foldDoc "" (++) (\i d -> ("\n" ++ replicate i ' ') ++ d)
 

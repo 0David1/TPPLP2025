@@ -2,18 +2,14 @@ Sean las siguientes definiciones:
 data Doc = Vacio | Texto String Doc | Linea Int Doc
 
 indentar :: Int -> Doc -> Doc
-{I} indentar i = foldDoc Vacio Texto (agregarIndentacion i)
-
-agregarIndentacion :: Int -> Int -> Doc -> Doc
-agregarIndentacion agregar n | {A0} agregar <= 0 = error "la cantidad de espacios a agregar debe ser mayor a 0"
-                             | {A1} otherwise = Linea (n+agregar)
+{I} indentar i = foldDoc Vacio Texto (Linea . (+i))
 
 foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
-foldDoc cVacio cTexto cLinea documento = case documento of
-{F0}  Vacio -> cVacio
-{F1}  Texto text doc ->  cTexto text (rec doc)
-{F2}  Linea n doc -> cLinea n (rec doc)
-  where rec = foldDoc cVacio cTexto cLinea 
+{F} foldDoc cVacio cTexto cLinea doc = case doc of
+      Vacio     -> cVacio
+      Texto s d -> cTexto s (rec d)
+      Linea n d -> cLinea n (rec d)
+    where rec = foldDoc cVacio cTexto cLinea
 
 Lemas:
 ∀k :: Int positivo
@@ -94,8 +90,8 @@ Demostracion del {Lema1}:
 indentar k Vacio = Vacio
 
 indentar k Vacio
-= foldDoc Vacio Texto (agregarIndentacion k) Vacio {I}
-= Vacio {F0}
+= foldDoc Vacio Texto (Linea . (+i)) Vacio {I}
+= Vacio {F}
 
 Demostracion del {Lema2}:
 
@@ -103,8 +99,8 @@ Demostracion del {Lema2}:
 indentar k (Texto s d) = Texto s (indentar k d)
 
 indentar k (Texto s d)
-= foldDoc Vacio Texto (agregarIndentacion k) (Texto s d) {I}
-= Texto s (foldDoc Vacio Texto (agregarIndentacion k) d) {F1}
+= foldDoc Vacio Texto (Linea . (+i)) (Texto s d) {I}
+= Texto s (foldDoc Vacio Texto (Linea . (i+)) d) {F}
 = Texto s (indentar k d) {I}
 
 Demostracion del {Lema3}:
@@ -113,8 +109,7 @@ Demostracion del {Lema3}:
 indentar m (Linea k d) = Linea (m+k) (indentar m d)
 
 indentar m (Linea k d)
-= foldDoc Vacio Texto (agregarIndentacion m) (Linea k d) {I}
-= agregarIndentacion k (foldDoc Vacio Texto (agregarIndentacion m) d) {F2}
-= agregarIndentacion m k (indentar m d) {I}
-= Linea (k+m) (indentar m d) {A1}
+= foldDoc Vacio Texto (Linea . (+m)) (Linea k d) {I}
+= Linea (k+m) (foldDoc Vacio Texto (Linea . (+m)) d) {F}
+= Linea (k+m) (indentar m d) {I}
 = Linea (m+k) (indentar m d) {Conmutatividad de la suma}
