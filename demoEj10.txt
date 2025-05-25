@@ -1,7 +1,128 @@
-Programación Dinamica
-	paradigma de programación, que puede sistemáticamente y eficientemente explorar todas las posibles soluciones a un problema. Puede resolver problemas que tienen las siguientes características:
-	1) El problema puede resolverse a través de subproblemas superponibles, versiones mas chicas del problema original que se pueden reutilizar multiples veces.
-	2) El problema tiene una busqueda de optimalidad, es decir , una solución óptica se puede formar de soluciones optimas de los subproblemas del problema original.
+DEFINICIONES:
+	
+data Doc = Vacio | Texto String Doc | Linea Int Doc
+	
+indentar :: Int -> Doc -> Doc
+{I} indenter i = foldDoc Vacio Texto (Linea . (+i))
 
-Secuencia de fibonacci es el primer ejemplo clásico para explicar programación dinámica. 
+{C} (g . f) x = g (f x)
+
+foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
+{F} foldDoc cVacio cTexto xLinea documento = caso documento of 
+							Vacio -> cVacio
+							Texto s d -> cTexto s (rec d)
+							Linea n d -> cLinea n (rec d)
+					     where rec = foldDoc cVacio cTexto cLinea
+
+LEMAS:
+
+∀k :: Int positivo
+{Lema1} indentar k Vacio = Vacio
+
+∀k :: Int positivo , ∀s :: String , ∀d :: Doc
+{Lema2} indentar k (Texto s d) = Texto s (indentar k d)
+
+∀k :: Int positivo , ∀m :: Int mayor o igual cero , ∀d :: Doc
+{Lema3} indentar k (Linea m d) = Linea (k + m) (indentar k d)
+
+
+DEMOSTRACION: 
+
+∀n , m :: Int positivos, ∀d :: Doc
+indentar n (indentar m d) = indentar (n + m) d
+
+Hacemos induccion estructural en d :: Doc
+P(x) = ∀n, m ::Int positivos , indentar n (indentar m d) = indentar (n + m) d
+
+Caso Base : 
+	d = Vacio
+	indentar n (indentar m Vacio) = indentar (n + m) Vacio
+
+Lado Izquierdo:
+	indentar n (indentar m Vacio)
+	={Lema1} indentar n Vacio
+	={Lema1} Vacio
+
+Lado Derecho:
+	indentar (n + m ) Vacio
+	={Lema1} Vacio
+
+Queda probado el caso base Vacio.
+
+
+
+
+Casos Inductivos :
+	asumiendo HI quiero ver que pasa con los constructores recursivos
+	{HI} P(d) = ∀n , m :: Int positivos. indentar n (indentar m d) = indentar (n + m) d
+	
+
+Caso d = Texto s d
+
+Lado Izquierdo : 
+	indentar n (indentar m (Texto s d))
+	={Lema2}indentar n (Texto s (indentar m d))
+	={Lema2}Texto s (indentar n (indentar m d))
+	={HI}Texto s (indentar (n+m) d)
+
+Lado Derecho :
+	indentar (n+m) (Texto s d)
+	={Lema2)Texto s (indentar (n+m) d)
+
+Queda probado el caso d = Texto s d
+
+
+
+Caso d = Linea k d
+
+Lado Izquierdo :
+	indentar n (indentar m (Linea k d))
+	={Lema3}indentar n (Linea (k + m) (indentar m d))
+	={Lema3}Linea (k + m + n) (indentar n (indentar m d))
+	={HI}Linea (k + m + n) (indentar (n + m) d)
+	={INT}Linea (k + n + m) (indentar (n + m) d)
+
+Lado Derecho :
+	indentar (n + m) (Linea k d)
+	={Lema3}Linea (k + n + m ) (indentar (n + m) d)
+
+Queda probado el caso d = Linea k d
+
+Queda demostrado ∀n , m :: Int positivos, ∀d :: Doc. indentar n (indentar m d)= indentar (n + m) d
+
+
+
+DEMOSTRACION DE LOS LEMAS:
+
+Lema1  
+∀k :: Int positivo
+indentar k Vacio = Vacio
+
+indentar k Vacio=
+{I}foldDoc Vacio Texto (Linea . (+k)) Vacio 
+{F}Vacio -> Vacio
+=Vacio
+
+
+
+Lema2
+∀k :: Int positivo , ∀s :: String , ∀d :: Doc
+indentar k ( Texto s d) = Texto s ( indentar k d)
+
+indentar k (Texto s d)
+={I}foldDoc Vacio Texto (Linea . (+k)) (Texto s d)
+={F}Texto s d -> Texto s (foldDoc Vacio Texto (Linea (+k)) d)
+={I}Texto s (indentar k d)
+
+
+Lema3
+∀k , m :: Int positivos, ∀d :: Doc
+indentar k (Linea m d) = Linea (k + m) (indentar k d)
+
+indentar k (Linea m d) 
+={I}foldDoc Vacio Texto (Linea (+k)) (Linea m d)
+={F}Linea m d -> (Linea . (+k)) m (foldDoc Vacio (Linea . (+k)) d)
+={C}Linea (k + m)(foldDoc Vacio (Linea . (+k)) d)
+={I}Linea (k + m)(indentar k d)
+=Linea (k + m) (indentar k d)
 
