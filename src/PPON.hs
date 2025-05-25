@@ -1,7 +1,6 @@
 module PPON where
 
 import Documento
-import Control.Arrow (Arrow(second))
 
 data PPON
   = TextoPP String
@@ -9,26 +8,22 @@ data PPON
   | ObjetoPP [(String, PPON)]
   deriving (Eq, Show)
 
-
 pponAtomico :: PPON -> Bool
-pponAtomico (TextoPP _ )= True
-pponAtomico (IntPP _) = True
-pponAtomico _ = False
-
-
-
-
+pponAtomico p = case p of
+  TextoPP _  -> True
+  IntPP _    -> True
+  ObjetoPP _ -> False
 
 pponObjetoSimple :: PPON -> Bool
-pponObjetoSimple (ObjetoPP lista) = foldr (\elemento rec-> pponAtomico(snd elemento) && rec) True lista
+--no se si esto esta bien tengo que chequear que pasa con esto
+pponObjetoSimple l = case l of
+    TextoPP _ -> False
+    IntPP _ -> False 
+    ObjetoPP lista -> foldr (\dupla rec -> pponAtomico (snd dupla) && rec) True lista
 
-
-
---chequear si es estructural
 intercalar :: Doc -> [Doc] -> Doc
-intercalar input [] = vacio
-intercalar input (x: xs) =x <+> foldr(\d acc ->input<+>d<+> acc) vacio xs
-
+intercalar _ []        = vacio
+intercalar separador d = foldr1 (\doc rec -> doc <+> separador <+> rec) d
 
 entreLlaves :: [Doc] -> Doc
 entreLlaves [] = texto "{ }"
@@ -42,14 +37,23 @@ entreLlaves ds =
     <+> linea
     <+> texto "}"
 
-
 aplanar :: Doc -> Doc
-aplanar = texto. foldDoc (++) (\_ acc -> ' ': acc) ""
-
+aplanar = texto . foldDoc "" (++) (\_ d -> ' ' : d)
 
 pponADoc :: PPON -> Doc
-pponADoc (TextoPP s) = texto ("\""++s++"\"")
-pponADoc (IntPP i) = texto (show i)
-pponADoc (ObjetoPP lista)|pponObjetoSimple (ObjetoPP lista) = aplanar (entreLlaves (agregarDosPuntos lista))
-  |otherwise = entreLlaves (agregarDosPuntos lista)
-    where agregarDosPuntos =foldr (\(primero , segundo) acc ->intercalar(texto ": ") [texto ("\""++primero++"\""),pponADoc segundo ] : acc) []
+pponADoc (TextoPP s) = texto (show s)
+pponADoc (IntPP n) = texto (show n)
+pponADoc (ObjetoPP lista) |pponObjetoSimple(ObjetoPP lista ) = aplanar (formatoLlaves lista)
+                          |otherwise = formatoLlaves lista
+                           where formatoLlaves = entreLlaves . map (\(x, rec) -> texto (show x ++ ": ") <+> pponADoc rec)
+
+
+-- pponADoc p = case p of
+--   TextoPP s -> texto (show s)
+--   IntPP n -> texto (show n)
+--   ObjetoPP lista -> if pponObjetoSimple (ObjetoPP lista) then aplanar (formatoLlaves lista)
+--                                                        else formatoLlaves lista
+--   where formatoLlaves = entreLlaves . map (\(x, rec) -> texto (show x ++ ": ") <+> pponADoc rec)
+
+-- Es recursion estructural pues los casos base devuelven un valor fijo que no depende de la funcion pponADoc
+-- y el caso recursivo no usa pponAdoc ni la subestructura en otro lado salvo en la expresion (pponADoc rec)
