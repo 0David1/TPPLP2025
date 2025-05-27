@@ -47,6 +47,15 @@ pponADoc (ObjetoPP lista) |pponObjetoSimple(ObjetoPP lista ) = aplanar (formatoL
                           |otherwise = formatoLlaves lista
                            where formatoLlaves = entreLlaves . map (\(x, rec) -> texto (show x ++ ": ") <+> pponADoc rec)
 
+{-
+  ES RECURSION GLOBAL YA QUE EN EL CASO RECURSIVO (OBJETOPP LISTA) PREDICAMOS SOBRE LA ESTRUCTURA ORIGINAL CUANDO USAMOS PPOPOBJETO SIMPLE (OBJETOPPLILSTA) Y SEGUN EL RESULTADO DE ESE PREDICADO DECIDIMOS QUE HACER 
+  CON LA ESTRUCTURA RECURSIVA(CON LA LISTA)
+
+
+
+
+-}
+
 
 -- pponADoc p = case p of
 --   TextoPP s -> texto (show s)
