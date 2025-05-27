@@ -77,7 +77,7 @@ Caso d = Linea k d
 
 Lado Izquierdo :
 	indentar n (indentar m (Linea k d))
-	={Lema3}indentar n (Linea (k + m) (indentar m d))
+	={Lema3}indentar n (Linea (k + m) (indentar m d))//orden incorrecto
 	={Lema3}Linea (k + m + n) (indentar n (indentar m d))
 	={HI}Linea (k + m + n) (indentar (n + m) d)
 	={INT}Linea (k + n + m) (indentar (n + m) d)
