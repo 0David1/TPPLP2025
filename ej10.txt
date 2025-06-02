@@ -4,6 +4,8 @@ data Doc = Vacio | Texto String Doc | Linea Int Doc
 indentar :: Int -> Doc -> Doc
 {I} indentar i = foldDoc Vacio Texto (Linea . (+i))
 
+{C} (g . f) x = g (f x)
+
 foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
 {F} foldDoc cVacio cTexto cLinea doc = case doc of
       Vacio     -> cVacio
@@ -104,12 +106,12 @@ indentar k (Texto s d)
 = Texto s (indentar k d) {I}
 
 Demostracion del {Lema3}:
+∀k , m :: Int positivos, ∀d :: Doc
+indentar k (Linea m d) = Linea (k + m) (indentar k d)
 
-∀m, k :: Int positivos, ∀d :: Doc
-indentar m (Linea k d) = Linea (m+k) (indentar m d)
-
-indentar m (Linea k d)
-= foldDoc Vacio Texto (Linea . (+m)) (Linea k d) {I}
-= Linea (k+m) (foldDoc Vacio Texto (Linea . (+m)) d) {F}
-= Linea (k+m) (indentar m d) {I}
-= Linea (m+k) (indentar m d) {Conmutatividad de la suma}
+indentar k (Linea m d) 
+={I}foldDoc Vacio Texto (Linea (+k)) (Linea m d)
+={F}Linea m d -> (Linea . (+k)) m (foldDoc Vacio (Linea . (+k)) d)
+={C}Linea (k + m)(foldDoc Vacio (Linea . (+k)) d)
+={I}Linea (k + m)(indentar k d)
+=Linea (k + m) (indentar k d)
