@@ -78,7 +78,7 @@ indentar n = foldDoc Vacio Texto (\m acc -> Linea (m + n) acc)
 
 
 {-
-  Sea Texto s d entonces:
+   Sea Texto s d entonces:
 
    s no debe ser el string vacio y s no debe contener saltos de linea, igual que en el ejercicio anterior, la funcion
    texto mantiene estos dos invariantes
@@ -87,9 +87,10 @@ indentar n = foldDoc Vacio Texto (\m acc -> Linea (m + n) acc)
    forma de que d sea Texto o Linea es concatenando con otro Doc y esto solo ocurre usando la funcion <+>, y en el
    ejercicio anterior vimos que dicha funcion mantiene este invariante por lo tanto se cumple
 
-   sea Linea i d entonces:
+   Sea Linea i d entonces:
+
    i >= 0, se cumple pues la funcion linea genera una Linea 0 Vacio y su valor solo se modifica mediante la funcion
-  lamda  por lo que el valor como minimo va a ser 0 cumpliendo asi el invariante
+   lambda  por lo que el valor como minimo va a ser 0 cumpliendo asi el invariante
 -}
 
 -- Ejercicio 4

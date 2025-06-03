@@ -11,14 +11,18 @@ data PPON
 -- Ejercicio 5
 pponAtomico :: PPON -> Bool
 pponAtomico p = case p of
-  TextoPP _ -> True
-  IntPP _   -> True
-  _         -> False   
+  TextoPP _  -> True
+  IntPP _    -> True
+  ObjetoPP _ -> False   
 
 
 -- Ejercicio 6
 pponObjetoSimple :: PPON -> Bool
-pponObjetoSimple (ObjetoPP l) = foldr (\e rec -> pponAtomico (snd e) && rec) True l
+pponObjetoSimple p = case p of
+  TextoPP _  -> True
+  IntPP _    -> True
+  ObjetoPP l -> foldr (\e rec -> pponAtomico (snd e) && rec) True l
+
 
 -- Ejercicio 7
 intercalar :: Doc -> [Doc] -> Doc
@@ -45,15 +49,16 @@ aplanar = texto . foldDoc "" (++) (\_ rec -> ' ':rec)
 
 -- Ejercicio 9
 pponADoc :: PPON -> Doc
-pponADoc pp = case pp of
-    TextoPP s  -> texto (show s)
-    IntPP i    -> texto (show i)
-    ObjetoPP l
-        | pponObjetoSimple (ObjetoPP l) -> aplanar (entreLlaves (agregarDosPuntos l))
-        | otherwise                     -> entreLlaves (agregarDosPuntos l)
-  where agregarDosPuntos = foldr (\(x , y) rec -> intercalar (texto ": ") [texto (show  x), pponADoc y ] : rec) []
+pponADoc p = case p of
+  TextoPP s      -> texto (show s)
+  IntPP n        -> texto (show n)
+  ObjetoPP lista -> if pponObjetoSimple (ObjetoPP lista) then aplanar (formatoLlaves lista)
+                                                         else formatoLlaves lista
+  where formatoLlaves = entreLlaves . map (\(x, rec) -> texto (show x ++ ": ") <+> pponADoc rec)
 
+{-
+  Es recursion primitiva pues:
+    1. Los casos base, "Texto s" y "IntPP n", devuelven valores fijos.
+    2. El caso recursivo opera sobre "lista" de "Objeto lista" e invoca pponADoc sobre la subestructura. 
+-}
 
--- Es recursion estructural pues los casos base devuelven un valor fijo que no depende de la funcion pponADoc
--- y el caso recursivo no usa pponAdoc ni los 'y' en otro lado salvo en la expresion (pponADoc y)
--- ('y' representa a los PPON en cada tupla de la lista que vendrian siendo las subestructuras sobre las cuales se hace la recursion)
