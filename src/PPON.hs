@@ -52,17 +52,7 @@ pponADoc (ObjetoPP lista) | pponObjetoSimple(ObjetoPP lista) = aplanar (formatoL
   where formatoLlaves = entreLlaves . map (\(x, rec) -> texto (show x ++ ": ") <+> pponADoc rec)
 
 {-
-  Es recursion primitiva ya que accedemos y predicamos sobre la subestructura, en otra funcion ademas de pponADoc termino recursivo sin ser la funcion recursiva.
--}
-{-
   Es recursion primitiva pues:
-    1. Los casos base devuelven valores fijos:
-    2. el caso recursivo usa (g xs) y pponObjetoSimple en su definicion usa xs para pponAtomico que no es un llamado recursivo
-    
-    2. el caso recursivo usa (pponADoc sobre el recursivo) , y predica sobre Lista y objetoPP lista en varias partes 
-    pponObjeto lista 
-    iterativa no es porque no tiene acumulador.(el resultado recursivo es parametro) foldl
-    primitiva porque devuelve el acumulador sin usarlo como paramtetro.
-
-    el caso lo usas como parametro,   
+    1. Los casos base, "Texto s" y "IntPP n", devuelven valores fijos.
+    2. El caso recursivo opera sobre "lista" de "Objeto lista" e invoca pponADoc sobre la subestructura. 
 -}
