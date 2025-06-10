@@ -6,7 +6,7 @@ append(Inicio, Fin , Lista),
 length(Resultado,Tomar), 
 append(Resultado,_,Fin).
 
-
+%cambiar a columnas
 tablero(Filas,[Uno,Dos,Tres,Cuatro,Cinco]):-
 length(Uno, Filas),
 length(Cinco, Filas),
@@ -75,4 +75,20 @@ seccionTablero(Tablero,F,C,(I,J),E).
 
 
 
+poda(sinPoda, _).
 
+
+
+ubicarPiezas(Tablero,Poda,[]):-poda(Poda,Tablero).
+ubicarPiezas(Tablero,Poda,[Pieza|Resto]):-
+poda(Poda,Tablero),
+ubicarPieza(Tablero,Pieza),
+ubicarPiezas(Tablero,Poda,Resto).
+
+
+
+
+llenarTablero(Poda, Columnas, T):-
+tablero(Columnas,T),
+kPiezas(Columnas,Piezas),
+ubicarPiezas(T,Poda,Piezas).
