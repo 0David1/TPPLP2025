@@ -18,6 +18,13 @@ length(Dos, Filas).
 
 
 
+cantSoluciones(Poda,Columnas,N):-
+findall(T, llenarTablero(Poda, Columnas, T), TS),
+length(TS,N).
+
+
+
+
 
 
 
@@ -92,3 +99,17 @@ llenarTablero(Poda, Columnas, T):-
 tablero(Columnas,T),
 kPiezas(Columnas,Piezas),
 ubicarPiezas(T,Poda,Piezas).
+
+
+
+
+
+%   ?- time(cantSoluciones(sinPoda,3,N)).
+%   25,070,185 inferences, 1.227 CPU in 1.270 seconds (97% CPU, 20439761 Lips)
+%   N = 28.
+
+
+%   ?- time(cantSoluciones(sinPoda,4,N)).
+%   938,775,383 inferences, 45.631 CPU in 47.293 seconds (96% CPU, 20573024 Lips)
+%   N = 200.
+
