@@ -64,3 +64,15 @@ sublista(DFilas,Alto,T,Rec),forTablero(Rec,Ancho,DCol,Resultado).
 forTablero([],_,_,[]).
 forTablero([K|Resto],Ancho,J,[Rec1|Rec2]):- 
 sublista(J,Ancho,K,Rec1),forTablero(Resto,Ancho,J,Rec2).
+
+
+
+ubicarPieza(Tablero, Pieza):-
+pieza(Pieza,E), tamanio(E, F,C),
+coordenadas(Tablero,(I,J)),
+seccionTablero(Tablero,F,C,(I,J),E).
+
+
+
+
+
