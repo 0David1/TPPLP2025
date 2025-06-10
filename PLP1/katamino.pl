@@ -1,53 +1,53 @@
 :- use_module(piezas).
-
-sublista(Descartar, Tomar , Lista, Resultado) :- 
-append(Izquierda, Derecha, Lista), 
-length(Izquierda, Descartar),
-append(Resultado,_,Derecha),
-length(Resultado, Tomar).
-
-
+%! no poner espacios entre def y argumentos.
+sublista(Descartar , Tomar , Lista , Resultado) :- 
+length(Inicio, Descartar),
+append(Inicio, Fin , Lista), 
+length(Resultado,Tomar), 
+append(Resultado,_,Fin).
 
 
-tablero(Columnas, [Uno, Dos,Tres, Cuatro, Cinco]) :- 
-length(Uno, Columnas),
-length(Dos, Columnas),
-length(Tres, Columnas),
-length(Cuatro, Columnas),
-length(Cinco, Columnas).
-
-
-tamaño(Matriz, Filas , Columnas) :-
-length(Matriz , Filas),
-append([I],_,Matriz),
-length(I , Columnas).
-
-
-
-coordenadas(Tablero, (I,J)):-
-length(Tablero,Filas),
-append([Izq|_],Der, Tablero),
-length(Der,Queda), 
-I is Filas - Queda,
-length(Izq, Columnas),
-append([_|_],Col, Izq),
-length(Col, Resta),
-J is Columnas - Resta.
-
-
-
-
-
-Kpiezas(0,[]).
-kPiezas(K,Res):-
-length(Rec,K),
-nombrePiezas(Piezas),
-subset(Piezas , Rec),
-list_to_set(Rec,Res),
-length(Res,K).
+tablero(Filas,[Uno,Dos,Tres,Cuatro,Cinco]):-
+length(Uno, Filas),
+length(Cinco, Filas),
+length(Cuatro, Filas),
+length(Tres, Filas),
+length(Dos, Filas).
+%! puedo usar maplist.
 
 
 
 
 
 
+
+
+tamanio(Tablero , Filas, Columnas):-
+length(Tablero , Filas), append([Uno], _, Tablero), length(Uno, Columnas).
+
+
+
+
+
+coordenadas(Tablero, (I , J)):-
+append([Algo|_],Resto,Tablero),
+length(Resto, Menos), I is 5 - Menos,
+append([_|_],Resto2,Algo), 
+length(Algo, In),
+length(Resto2,Menos2), J is In - Menos2.
+
+
+kPiezas(0, []).
+kPiezas(Largo, Lista):-
+nombrePiezas(Piezas), sublistaLargo(Piezas,Largo, Lista).
+
+
+
+
+%sublista([],[]).
+%sublista([K|R],[K|Rec]):- sublista(R,Rec).
+%sublista([_|R], Rec):- sublista(R, Rec).
+
+sublistaLargo(_,0,[]).
+sublistaLargo([K|R],L,[K|Rec]):- length([K|R],J), J>=L ,N is L - 1,sublistaLargo(R,N,Rec).
+sublistaLargo([_|R],L,Rec):- L > 0, sublistaLargo(R,L,Rec).
