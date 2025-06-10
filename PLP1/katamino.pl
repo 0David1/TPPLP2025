@@ -51,3 +51,16 @@ nombrePiezas(Piezas), sublistaLargo(Piezas,Largo, Lista).
 sublistaLargo(_,0,[]).
 sublistaLargo([K|R],L,[K|Rec]):- length([K|R],J), J>=L ,N is L - 1,sublistaLargo(R,N,Rec).
 sublistaLargo([_|R],L,Rec):- L > 0, sublistaLargo(R,L,Rec).
+
+
+
+%largo de t es alto y largo de cada uno es ancho.
+seccionTablero(T,Alto , Ancho, (I,J), Resultado):-
+DFilas is I - 1, DCol is J - 1,
+sublista(DFilas,Alto,T,Rec),forTablero(Rec,Ancho,DCol,Resultado).
+
+
+
+forTablero([],_,_,[]).
+forTablero([K|Resto],Ancho,J,[Rec1|Rec2]):- 
+sublista(J,Ancho,K,Rec1),forTablero(Resto,Ancho,J,Rec2).
