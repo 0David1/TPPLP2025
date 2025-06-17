@@ -83,7 +83,17 @@ seccionTablero(Tablero,F,C,(I,J),E).
 
 
 poda(sinPoda, _).
+poda(podaMod5, T):- todosGruposLibresModulo5(T).
 
+todosGruposLibresModulo5(Tablero):- 
+findall((I,J), (coordenadas(Tablero, (I,J)), esLibre(Tablero, (I,J))), Libres),
+agrupar(Libres, LibresAgrupados), maplist(esMod5,LibresAgrupados).
+
+esMod5(L):- 
+length(L, N), 0 =:= N mod 5.
+
+esLibre(Tablero, (I,J)):-
+nth1(I, Tablero, Fila), nth1(J, Fila, Elemento), var(Elemento). 
 
 
 ubicarPiezas(Tablero,Poda,[]):-poda(Poda,Tablero).
@@ -112,4 +122,26 @@ ubicarPiezas(T,Poda,Piezas).
 %   ?- time(cantSoluciones(sinPoda,4,N)).
 %   938,775,383 inferences, 45.631 CPU in 47.293 seconds (96% CPU, 20573024 Lips)
 %   N = 200.
+
+% mis tiempos 
+%   ?- time(cantSoluciones(sinPoda, 3, N)).
+%   25,070,184 inferences, 2.271 CPU in 2.279 seconds (100% CPU, 11041393 Lips)
+%   N = 28.
+
+%   ?- time(cantSoluciones(sinPoda, 4, N)).
+%   938,775,383 inferences, 82.742 CPU in 83.023 seconds (100% CPU, 11345752 Lips)
+%   N = 200.
+
+
+%   ?- time(cantSoluciones(podaMod5, 3, N)).
+%   13,582,922 inferences, 1.320 CPU in 1.332 seconds (99% CPU, 10287197 Lips)
+%   N = 28.
+
+%   ?- time(cantSoluciones(podaMod5, 4, N)).
+%   283,811,382 inferences, 26.457 CPU in 26.579 seconds (100% CPU, 10727256 Lips)
+%   N = 200.
+
+
+
+
 
